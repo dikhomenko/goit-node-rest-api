@@ -1,6 +1,13 @@
-const controllerWrapper = (ctrl) => {
-  return (req, res, next) => {
-    Promise.resolve(ctrl(req, res, next)).catch(next);
+export const controllerWrapper = (ctrl) => {
+  return async (req, res, next) => {
+    try {
+      await ctrl(req, res, next);
+    } catch (error) {
+      if (error instanceof ValidationError) {
+        return res.status(400).json({ message: error.message });
+      }
+      next(error);
+    }
   };
 };
 
