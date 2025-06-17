@@ -28,10 +28,14 @@ const Contact = sequelize.define(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
+      owner: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    }
   }
 );
 
-Contact.sync({ force: false })
+Contact.sync({ force: true }) // use force: true to drop and create the table
   .then(() => {
     console.log('Contact table created successfully.');
   })

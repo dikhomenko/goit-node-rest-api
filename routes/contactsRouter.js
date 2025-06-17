@@ -9,8 +9,11 @@ import {
 } from "../controllers/contactsControllers.js";
 import validateBody from "../Helpers/validateBody.js";
 import { createContactSchema, updateContactSchema, updateFavoriteSchema } from "../schemas/contactsSchemas.js";
+import authMiddleware from "../helpers/authMiddleware.js";
 
 const contactsRouter = express.Router();
+
+contactsRouter.use(authMiddleware);
 
 contactsRouter.get("/", getAllContacts);
 
@@ -22,9 +25,6 @@ contactsRouter.post("/", validateBody(createContactSchema), createContact);
 
 contactsRouter.put("/:id", validateBody(updateContactSchema), updateContact);
 
-contactsRouter.patch(
-  "/:contactId/favorite", 
-  validateBody(updateFavoriteSchema),
-  updateFavoriteStatus
-);
+contactsRouter.patch("/:contactId/favorite", validateBody(updateFavoriteSchema), updateFavoriteStatus);
+
 export default contactsRouter;
