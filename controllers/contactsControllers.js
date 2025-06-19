@@ -3,12 +3,12 @@ import HttpError from "../helpers/HttpError.js";
 import controllerWrapper from "../helpers/controllerWrapper.js";
 
 const getAllContacts = async (req, res) => {
-  const contacts = await contactsService.listContacts();
+  const contacts = await contactsService.listContacts(req.user.id);
   res.json(contacts);
 };
 
 const getOneContact = async (req, res) => {
-  const contact = await contactsService.getContactById(req.params.id);
+  const contact = await contactsService.getContactById(req.params.id, req.user.id);
   if (!contact) {
     throw HttpError(404, "Not found");
   }
@@ -16,7 +16,7 @@ const getOneContact = async (req, res) => {
 };
 
 const deleteContact = async (req, res) => {
-  const removed = await contactsService.removeContact(req.params.id);
+  const removed = await contactsService.removeContact(req.params.id, req.user.id);
   if (!removed) {
     throw HttpError(404, "Not found");
   }
@@ -25,13 +25,13 @@ const deleteContact = async (req, res) => {
 
 const createContact = async (req, res) => {
   const { name, email, phone } = req.body;
-  const newContact = await contactsService.addContact(name, email, phone);
+  const newContact = await contactsService.addContact(name, email, phone, req.user.id);
   res.status(201).json(newContact);
 };
 
 const updateContact = async (req, res) => {
   const { name, email, phone } = req.body;
-  const updated = await contactsService.updateContact(req.params.id, { name, email, phone });
+  const updated = await contactsService.updateContact(req.params.id, { name, email, phone }, req.user.id);
   if (!updated) {
     throw HttpError(404, "Not found");
   }
@@ -40,7 +40,7 @@ const updateContact = async (req, res) => {
 
 const updateStatusContact = async (req, res) => {
   const { contactId } = req.params;
-  const updated = await contactsService.updateContact(contactId, req.body);
+  const updated = await contactsService.updateContact(contactId, req.body, req.user.id);
   if (!updated) {
     throw HttpError(404, "Not found");
   }

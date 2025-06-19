@@ -1,3 +1,5 @@
+import { ValidationError } from "sequelize";
+
 export const controllerWrapper = (ctrl) => {
   return async (req, res, next) => {
     try {
