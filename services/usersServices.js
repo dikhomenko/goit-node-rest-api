@@ -3,17 +3,21 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import HttpError from "../helpers/HttpError.js";
 import "dotenv/config";
+import gravatar from "gravatar";
 
 export async function registerUser({ email, password, subscription = "starter" }) {
   const existingUser = await User.findOne({ where: { email } });
   if (existingUser) throw HttpError(409, "Email in use");
 
   const hashedPassword = await bcrypt.hash(password, 10);
-  const newUser = await User.create({ email, password: hashedPassword, subscription });
+  const avatarURL = gravatar.url(email, { s: "250", d: "retro" }, true);
+
+  const newUser = await User.create({ email, password: hashedPassword, subscription, avatarURL });
   return {
     user: {
       email: newUser.email,
       subscription: newUser.subscription,
+      avatarURL: newUser.avatarURL,
     }
   };
 }
@@ -49,6 +53,14 @@ export async function updateSubscription(userId, subscription) {
   const user = await User.findByPk(userId);
   if (!user) throw HttpError(404, "User not found");
   user.subscription = subscription;
+  await user.save();
+  return user;
+}
+
+export async function updateAvatar(userId, avatarURL) {
+  const user = await User.findByPk(userId);
+  if (!user) throw HttpError(404, "User not found");
+  user.avatarURL = avatarURL;
   await user.save();
   return user;
 }
