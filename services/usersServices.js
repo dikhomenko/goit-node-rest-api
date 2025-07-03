@@ -40,6 +40,9 @@ export async function loginUser({ email, password }) {
   const user = await User.findOne({ where: { email } });
   if (!user) throw HttpError(401, "Email or password is wrong");
 
+  // Check if email is verified
+  if (!user.verify) throw HttpError(401, "Email not verified");
+
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) throw HttpError(401, "Email or password is wrong");
 
