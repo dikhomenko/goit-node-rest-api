@@ -5,7 +5,8 @@ import {
   logoutUserWrapper as logoutUser,
   getCurrentUserWrapper as getCurrentUser,
   updateSubscriptionWrapper as updateSubscription,
-  updateAvatarWrapper as updateAvatar
+  updateAvatarWrapper as updateAvatar,
+  verifyEmailWrapper as verifyEmail
 } from "../controllers/usersController.js";
 import validateBody from "../Helpers/validateBody.js";
 import { createUserSchema, loginUserSchema } from "../schemas/usersSchemas.js";
@@ -19,6 +20,7 @@ const upload = multer();
 // public endpoints
 usersRouter.post("/register", validateBody(createUserSchema), registerUser);
 usersRouter.post("/login", validateBody(loginUserSchema), loginUser);
+usersRouter.get("/verify/:verificationToken", verifyEmail);
 
 // private endpoints
 usersRouter.post("/logout", authMiddleware, logoutUser);

@@ -4,6 +4,8 @@ import jwt from "jsonwebtoken";
 import HttpError from "../helpers/HttpError.js";
 import "dotenv/config";
 import gravatar from "gravatar";
+import { nanoid } from "nanoid";
+import mailSender from "../helpers/mailSender.js";  
 
 export async function registerUser({ email, password, subscription = "starter" }) {
   const existingUser = await User.findOne({ where: { email } });
@@ -11,8 +13,20 @@ export async function registerUser({ email, password, subscription = "starter" }
 
   const hashedPassword = await bcrypt.hash(password, 10);
   const avatarURL = gravatar.url(email, { s: "250", d: "retro" }, true);
+  const verificationToken = nanoid();
+  
+  const newUser = await User.create({
+    email,
+    password: hashedPassword,
+    subscription,
+    avatarURL,
+    verificationToken,
+    verify: false,
+  });
 
-  const newUser = await User.create({ email, password: hashedPassword, subscription, avatarURL });
+  // Send verification email
+  await mailSender.sendVerificationEmail(email, verificationToken);
+
   return {
     user: {
       email: newUser.email,
@@ -64,3 +78,16 @@ export async function updateAvatar(userId, avatarURL) {
   await user.save();
   return user;
 }
+
+export async function findUserByVerificationToken(verificationToken) {
+  return await User.findOne({ where: { verificationToken } });
+}
+
+export async function verifyUser(userId) {
+  const user = await User.findByPk(userId);
+  if (!user) throw HttpError(404, "User not found");
+  user.verify = true;
+  user.verificationToken = null;
+  await user.save();
+  return user;
+} 

@@ -67,6 +67,16 @@ const moveToAvatars = async (tmpPath, userId, ext) => {
   return fileName;
 };
 
+const verifyEmail = async (req, res) => {
+  const { verificationToken } = req.params;
+  const user = await usersService.findUserByVerificationToken(verificationToken);
+  if (!user) {
+    throw HttpError(404, "User not found");
+  }
+  await usersService.verifyUser(user.id);
+  res.json({ message: "Verification successful" });
+};
+
 
 export const registerUserWrapper = controllerWrapper(registerUser);
 export const loginUserWrapper = controllerWrapper(loginUser);
@@ -74,3 +84,4 @@ export const logoutUserWrapper = controllerWrapper(logoutUser);
 export const getCurrentUserWrapper = controllerWrapper(getCurrentUser);
 export const updateSubscriptionWrapper  = controllerWrapper(updateSubscription);
 export const updateAvatarWrapper = controllerWrapper(updateAvatar);
+export const verifyEmailWrapper = controllerWrapper(verifyEmail);
