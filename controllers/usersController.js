@@ -23,8 +23,8 @@ const logoutUser = async (req, res) => {
 };
 
 const getCurrentUser = async (req, res) => {
-  const { email, subscription } = req.user;
-  res.json({ email, subscription });
+  const { email, subscription, avatarURL } = req.user;
+  res.json({ email, subscription, avatarURL });
 };
 
 const updateSubscription = async (req, res) => {
