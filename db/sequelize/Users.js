@@ -22,9 +22,13 @@ const User = sequelize.define(
             type: DataTypes.STRING,
             defaultValue: null,
         },
+        avatarURL: {
+            type: DataTypes.STRING,
+            defaultValue: null,
+        },
     });
 
-User.sync({ force: false })
+User.sync({ force: true })
     .then(() => {   
         console.log('User table created successfully.');
     })

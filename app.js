@@ -3,6 +3,7 @@ import express from "express";
 import morgan from "morgan";
 import cors from "cors";
 import "dotenv/config";
+import path from "path";
 
 import "./db/sequelize/sequelize.js";
 import contactsRouter from "./routes/contactsRouter.js";
@@ -15,6 +16,7 @@ app.use(morgan("tiny"));
 app.use(cors());
 app.use(express.json());
 
+app.use("/avatars", express.static(path.join(process.cwd(), "public", "avatars")));
 app.use("/api/contacts", contactsRouter);
 app.use("/api/auth", usersRouter);
 
