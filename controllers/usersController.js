@@ -77,6 +77,12 @@ const verifyEmail = async (req, res) => {
   res.json({ message: "Verification successful" });
 };
 
+const resendVerificationEmail = async (req, res) => {
+  const { email } = req.body;
+  const result = await usersService.resendVerificationEmail(email);
+  res.json(result);
+};
+
 
 export const registerUserWrapper = controllerWrapper(registerUser);
 export const loginUserWrapper = controllerWrapper(loginUser);
@@ -85,3 +91,4 @@ export const getCurrentUserWrapper = controllerWrapper(getCurrentUser);
 export const updateSubscriptionWrapper  = controllerWrapper(updateSubscription);
 export const updateAvatarWrapper = controllerWrapper(updateAvatar);
 export const verifyEmailWrapper = controllerWrapper(verifyEmail);
+export const resendVerificationEmailWrapper = controllerWrapper(resendVerificationEmail);
